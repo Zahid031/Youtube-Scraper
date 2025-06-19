@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'scraper',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,7 @@ DATABASES = {
         'NAME': 'youtube_scraper_db',
         'USER': 'youtube_scraper',
         'PASSWORD': 'youtube_scraper',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
@@ -124,8 +125,26 @@ AUTH_PASSWORD_VALIDATORS = [
 # }
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+REST_FRAMEWORK = {
+    # YOUR OTHER DRF SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'YouTube Scraper API',
+    'DESCRIPTION': 'A detailed description of YouTube Scraper API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # We will serve the schema separately
+    # OTHER SETTINGS
+}
+
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -153,3 +172,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+#CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]

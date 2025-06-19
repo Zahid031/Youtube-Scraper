@@ -2,7 +2,6 @@ from django.db import models
 from datetime import timezone
 
 
-
 class Channel(models.Model):
     channel_id = models.CharField(max_length=100, unique=True)
     channel_url = models.URLField()
