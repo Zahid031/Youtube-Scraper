@@ -2,14 +2,15 @@ from django.db import models
 from datetime import timezone
 
 
+
 class Channel(models.Model):
     channel_id = models.CharField(max_length=100, unique=True)
     channel_url = models.URLField()
     title = models.CharField(max_length=500)
     description = models.TextField(blank=True)
     subscriber_count = models.BigIntegerField(null=True, blank=True)
-    video_count = models.IntegerField(null=True, blank=True)
-    view_count = models.BigIntegerField(null=True, blank=True)
+    # video_count = models.IntegerField(null=True, blank=True)
+    # view_count = models.BigIntegerField(null=True, blank=True)
     thumbnail_url = models.URLField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

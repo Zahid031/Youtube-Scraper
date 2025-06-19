@@ -3,7 +3,7 @@ from .models import Channel, Video, ScrapingTask
 
 @admin.register(Channel)
 class ChannelAdmin(admin.ModelAdmin):
-    list_display = ['title', 'subscriber_count', 'video_count', 'created_at']
+    list_display = ['title', 'subscriber_count', 'created_at']
     search_fields = ['title', 'channel_id']
     readonly_fields = ['created_at', 'updated_at']
 
