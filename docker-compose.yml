@@ -1,6 +1,48 @@
+# version: '3.9'
+
+# services:
+#   youtube-scraper:
+#     build: .
+#     command: >
+#       sh -c "python manage.py migrate &&
+#              python manage.py runserver 0.0.0.0:8000"
+#     volumes:
+#       - .:/code
+#     ports:
+#       - 8000:8000
+#     depends_on:
+#       - db
+#       - redis
+
+#   db:
+#     image: postgres:latest
+#     environment:
+#       POSTGRES_USER: youtube_scraper
+#       POSTGRES_PASSWORD: youtube_scraper
+#       POSTGRES_DB: youtube_scraper_db
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+#   redis:
+#     image: redis:8-alpine
+
+#   celery:
+#     build: .
+#     command: celery -A youtube_scraper worker --loglevel=info --concurrency=5
+#     volumes:
+#       - .:/code
+#     depends_on:
+#       - db
+#       - redis
+
+# volumes:
+#   postgres_data:
+
+
 version: '3.9'
 
 services:
+  # Backend API
   youtube-scraper:
     build: .
     command: >
@@ -9,11 +51,30 @@ services:
     volumes:
       - .:/code
     ports:
-      - 8000:8000
+      - "8000:8000"
     depends_on:
       - db
       - redis
+    environment:
+      - DEBUG=1
+      - DATABASE_URL=postgresql://youtube_scraper:youtube_scraper@db:5432/youtube_scraper_db
+      - REDIS_URL=redis://redis:6379/0
 
+  # Frontend React App
+  frontend:
+    build: 
+      context: ./Scraper-UI  # Adjust this path to your frontend directory
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Scraper-UI:/app  # Adjust this path to your frontend directory
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://youtube-scraper:8000  # Use Docker service name    depends_on:
+      - youtube-scraper
+
+  # Database
   db:
     image: postgres:latest
     environment:
@@ -23,17 +84,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
+  # Redis
   redis:
     image: redis:8-alpine
 
+
+  # Celery Worker
   celery:
     build: .
-    command: celery -A youtube_scraper worker --loglevel=info --concurrency=5
+    command: celery -A youtube_scraper worker --loglevel=info 
     volumes:
       - .:/code
     depends_on:
       - db
       - redis
+    environment:
+      - DATABASE_URL=postgresql://youtube_scraper:youtube_scraper@db:5432/youtube_scraper_db
+      - REDIS_URL=redis://redis:6379/0
+
 
 volumes:
   postgres_data:
