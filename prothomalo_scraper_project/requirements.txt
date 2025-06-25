@@ -1,0 +1,7 @@
+django
+elasticsearch
+celery
+redis
+djangorestframework
+requests
+beautifulsoup4
